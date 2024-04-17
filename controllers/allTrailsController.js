@@ -45,3 +45,44 @@ async function searchTrailsFromAPI(coordinates, radiusInMiles) {
         throw error;
     }
 }
+
+const axios = require('axios');
+
+// Controller function to fetch all trails from AllTrails API
+exports.getAllTrails = async (req, res) => {
+  try {
+    const trails = await fetchAllTrailsFromAPI();
+    res.json(trails);
+  } catch (error) {
+    console.error('Error fetching trails:', error);
+    res.status(500).json({ error: 'Internal server error' });
+  }
+};
+
+// Function to fetch all trails from AllTrails API
+async function fetchAllTrailsFromAPI() {
+  try {
+    const apiKey = 'YOUR_ALLTRAILS_API_KEY';
+    const apiUrl = 'https://www.alltrails.com/api/alltrails/areas';
+
+    const response = await axios.get(apiUrl, {
+      headers: {
+        'X-Requested-With': 'XMLHttpRequest',
+        'X-CSRF-Token': 'my-csrf-token' // Add CSRF token if required by the API
+      }
+    });
+
+    return response.data.areas;
+  } catch (error) {
+    console.error('Error fetching trails from API:', error);
+    throw error;
+  }
+}
+
+
+
+
+
+
+
+
