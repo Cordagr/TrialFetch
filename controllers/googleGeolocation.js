@@ -17,13 +17,3 @@ async function geocodeLocation(location) {
         throw error;
     }
 }
-
-// Example usage:
-const location = '1600 Amphitheatre Parkway, Mountain View, CA';
-geocodeLocation(location)
-    .then(coordinates => {
-        console.log('Geocoded coordinates:', coordinates);
-    })
-    .catch(error => {
-        console.error('Error:', error);
-    });
