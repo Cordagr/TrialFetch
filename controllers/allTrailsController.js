@@ -60,7 +60,7 @@ exports.getAllTrails = async (req, res) => {
 };
 
 // Function to fetch all trails from AllTrails API
-async function fetchAllTrailsFromAPI() {
+async function fetchAllTrails() {
   try {
     const apiKey = 'YOUR_ALLTRAILS_API_KEY';
     const apiUrl = 'https://www.alltrails.com/api/alltrails/areas';
@@ -72,12 +72,27 @@ async function fetchAllTrailsFromAPI() {
       }
     });
 
-    return response.data.areas;
+    // Display trail information
+    const trails = response.data.areas;
+    const trailsHtml = trails.map(trail => {
+      return `
+        <div class="trail">
+          <h2>${trail.name}</h2>
+          <p><strong>Rating:</strong> ${trail.avgRating} (${trail.numReviews} reviews)</p>
+          <p><strong>Description:</strong> ${trail.description}</p>
+          <p><strong>Location:</strong> ${trail.city}, ${trail.region}, ${trail.country}</p>
+          <p><strong>Length:</strong> ${trail.length} miles</p>
+        </div>
+      `;
+    }).join('');
+
+    document.getElementById('trails').innerHTML = trailsHtml;
   } catch (error) {
-    console.error('Error fetching trails from API:', error);
-    throw error;
+    console.error('Error fetching trails:', error);
+    document.getElementById('trails').textContent = 'Error: Unable to fetch trails';
   }
 }
+
 
 
 
