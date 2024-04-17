@@ -4,22 +4,22 @@ document.getElementById('locationForm').addEventListener('submit', function(even
 
   const location = document.getElementById('locationInput').value;
   
-  // Make API request to geocode location
+  // Geocode location
   geocodeLocation(location)
     .then(coordinates => {
-      // Display coordinates
-      document.getElementById('coordinates').textContent = `Latitude: ${coordinates.latitude}, Longitude: ${coordinates.longitude}`;
+      // Find trails using AllTrails API
+      findTrails(coordinates);
     })
     .catch(error => {
       console.error('Error:', error);
-      document.getElementById('coordinates').textContent = 'Error: Unable to geocode location';
+      document.getElementById('trails').textContent = 'Error: Unable to geocode location';
     });
 });
 
 // Function to geocode location using Google Maps Geocoding API
 async function geocodeLocation(location) {
   try {
-    const apiKey = 'YOUR_API_KEY';
+    const apiKey = 'YOUR_GOOGLE_API_KEY';
     const encodedLocation = encodeURIComponent(location);
     const apiUrl = `https://maps.googleapis.com/maps/api/geocode/json?address=${encodedLocation}&key=${apiKey}`;
 
@@ -33,3 +33,23 @@ async function geocodeLocation(location) {
     throw error;
   }
 }
+
+// Function to find trails using AllTrails API
+async function findTrails(coordinates) {
+  try {
+    const apiKey = 'YOUR_ALLTRAILS_API_KEY';
+    const radiusInMiles = 10; // Example radius (adjust as needed)
+    const apiUrl = `https://www.alltrails.com/api/alltrails/areas?limit=10&lat=${coordinates.latitude}&lon=${coordinates.longitude}&maxDistance=${radiusInMiles * 1609.34}`;
+
+    const response = await axios.get(apiUrl);
+
+    // Display trail information
+    const trails = response.data.areas;
+    const trailsHtml = trails.map(trail => `<p>${trail.name}</p>`).join('');
+    document.getElementById('trails').innerHTML = trailsHtml;
+  } catch (error) {
+    console.error('Error finding trails:', error);
+    document.getElementById('trails').textContent = 'Error: Unable to find trails';
+  }
+}
+
