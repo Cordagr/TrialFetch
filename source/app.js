@@ -58,6 +58,31 @@ document.getElementById('fetchAllTrails').addEventListener('click', function() {
   fetchAllTrails();
 });
 
+document.getElementById('saveTrailForm').addEventListener('submit', async function(event) {
+  event.preventDefault();
+
+  const name = document.getElementById('name').value;
+  const location = document.getElementById('location').value;
+  const length = document.getElementById('length').value;
+
+  try {
+    // Make a POST request to save the trail
+    const response = await axios.post('/api/trails/save', { name, location, length });
+    console.log(response.data.message);
+
+    // Optionally, display a success message or redirect to another page
+  } catch (error) {
+    console.error('Error saving trail:', error);
+    // Display error message to the user
+  }
+});
+
+
+
+
+
+
+
 // Function to fetch all trails from AllTrails API
 async function fetchAllTrails() {
   try {
