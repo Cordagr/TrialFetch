@@ -1,0 +1,63 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Nearby Trails</title>
+</head>
+<body>
+  <h1>Nearby Trails</h1>
+  <button id="fetchTrailsBtn">Fetch Nearby Trails</button>
+  <ul id="trailsList"></ul>
+
+  <script>
+    async function getCurrentLocation() {
+      return new Promise((resolve, reject) => {
+        if (navigator.geolocation) {
+          navigator.geolocation.getCurrentPosition(resolve, reject);
+        } else {
+          reject(new Error('Geolocation is not supported by this browser.'));
+        }
+      });
+    }
+
+    async function fetchNearbyTrails(latitude, longitude) {
+      const apiKey = 'YOUR_API_KEY'; // Replace with your actual API key
+      const url = `https://www.hikingproject.com/data/get-trails?lat=${latitude}&lon=${longitude}&maxDistance=10&key=${apiKey}`;
+
+      try {
+        const response = await fetch(url);
+        const data = await response.json();
+        return data.trails;
+      } catch (error) {
+        console.error('Error fetching trails:', error);
+        return [];
+      }
+    }
+
+    async function getNearbyTrails() {
+      try {
+        const position = await getCurrentLocation();
+        const { latitude, longitude } = position.coords;
+        const trails = await fetchNearbyTrails(latitude, longitude);
+        console.log('Nearby trails:', trails);
+        displayTrails(trails);
+      } catch (error) {
+        console.error('Error getting nearby trails:', error);
+      }
+    }
+
+    function displayTrails(trails) {
+      const trailsList = document.getElementById('trailsList');
+      trailsList.innerHTML = '';
+      trails.forEach(trail => {
+        const listItem = document.createElement('li');
+        listItem.textContent = `${trail.name} - ${trail.location}`;
+        trailsList.appendChild(listItem);
+      });
+    }
+
+    document.getElementById('fetchTrailsBtn').addEventListener('click', getNearbyTrails);
+  </script>
+</body>
+</html>
