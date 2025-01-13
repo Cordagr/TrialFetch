@@ -29,6 +29,7 @@
       const email = document.getElementById('signUpEmail').value;
       const password = document.getElementById('signUpPassword').value;
       await signUp(email, password);
+      alert('Verification email sent. Please check your inbox.');
     });
 
     document.getElementById('signInForm').addEventListener('submit', async (e) => {
