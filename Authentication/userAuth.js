@@ -1,6 +1,8 @@
 // auth.js
 import { auth } from './firebase';
-import { createUserWithEmailAndPassword, sendEmailVerification, signInWithEmailAndPassword } from "firebase/auth";
+import { createUserWithEmailAndPassword, sendEmailVerification, signInWithEmailAndPassword, sendPasswordResetEmail } from "firebase/auth";
+
+
 
 // Sign Up and Send Verification Email
 export const signUp = async (email, password) => {
@@ -28,3 +30,19 @@ export const signIn = async (email, password) => {
     console.error('Error signing in:', error);
   }
 };
+
+// Password Reset Functionality // 
+export const resetPassword = async(email) =>
+ try {
+      await sendPasswordResetEmail(auth, email);
+      console.log('Password reset email has been sent to: ', email);
+  } catch(error)
+  {
+    console.error('Error sending password to reset email: ', error)
+  }
+  };
+
+
+
+
+
