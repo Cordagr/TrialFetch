@@ -21,8 +21,14 @@
     <button type="submit">Sign In</button>
   </form>
 
+  <h2>Reset Password</h2>
+  <form id="resetPasswordForm">
+    <input type="email" id="resetPasswordEmail" placeholder="Email" required>
+    <button type="submit">Reset Password</button>
+  </form>
+
   <script type="module">
-    import { signUp, signIn } from './auth.js';
+    import { signUp, signIn, resetPassword } from './auth.js';
 
     document.getElementById('signUpForm').addEventListener('submit', async (e) => {
       e.preventDefault();
@@ -37,6 +43,13 @@
       const email = document.getElementById('signInEmail').value;
       const password = document.getElementById('signInPassword').value;
       await signIn(email, password);
+    });
+
+    document.getElementById('resetPasswordForm').addEventListener('submit', async (e) => {
+      e.preventDefault();
+      const email = document.getElementById('resetPasswordEmail').value;
+      await resetPassword(email);
+      alert('Password reset email sent. Please check your inbox.');
     });
   </script>
 </body>
