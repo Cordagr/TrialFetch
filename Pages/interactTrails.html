@@ -1,0 +1,55 @@
+<!-- index.html -->
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Trails</title>
+</head>
+<body>
+  <h1>Save and Rate Trails</h1>
+
+  <h2>Save Trail</h2>
+  <form id="saveTrailForm">
+    <input type="text" id="trailName" placeholder="Trail Name" required>
+    <input type="text" id="trailLocation" placeholder="Trail Location" required>
+    <button type="submit">Save Trail</button>
+  </form>
+
+  <h2>Rate Trail</h2>
+  <form id="rateTrailForm">
+    <input type="text" id="trailId" placeholder="Trail ID" required>
+    <input type="number" id="trailRating" placeholder="Rating (1-5)" required>
+    <button type="submit">Rate Trail</button>
+  </form>
+
+  <script type="module">
+    import { auth } from './firebase.js';
+    import { saveTrail, rateTrail } from './schema.js';
+
+    // Save Trail
+    document.getElementById('saveTrailForm').addEventListener('submit', async (e) => {
+      e.preventDefault();
+      const user = auth.currentUser;
+      if (!user) {
+        alert('Please sign in to save a trail.');
+        return;
+      }
+      const trailName = document.getElementById('trailName').value;
+      const trailLocation = document.getElementById('trailLocation').value;
+      const trail = { name: trailName, location: trailLocation };
+      await saveTrail(user.uid, trail);
+      alert('Trail saved successfully.');
+    });
+
+    // Rate Trail
+    document.getElementById('rateTrailForm').addEventListener('submit', async (e) => {
+      e.preventDefault();
+      const trailId = document.getElementById('trailId').value;
+      const trailRating = document.getElementById('trailRating').value;
+      await rateTrail(trailId, trailRating);
+      alert('Trail rated successfully.');
+    });
+  </script>
+</body>
+</html>
