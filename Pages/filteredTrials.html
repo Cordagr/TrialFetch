@@ -1,0 +1,62 @@
+<!-- index.html -->
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Filter Trails</title>
+</head>
+<body>
+  <h1>Filter Trails</h1>
+
+  <h2>Filter Criteria</h2>
+  <form id="filterTrailsForm">
+    <label for="stars">Minimum Stars:</label>
+    <select id="stars">
+      <option value="">Select</option>
+      <option value="1">1 Star</option>
+      <option value="2">2 Stars</option>
+      <option value="3">3 Stars</option>
+      <option value="4">4 Stars</option>
+      <option value="5">5 Stars</option>
+    </select>
+    <label for="nonVisited">Non-Visited Trails:</label>
+    <input type="checkbox" id="nonVisited">
+    <button type="submit">Filter Trails</button>
+  </form>
+
+  <h2>Filtered Trails</h2>
+  <ul id="filteredTrailsList"></ul>
+
+  <script type="module">
+    import { auth } from './firebase.js';
+    import { getFilteredTrails, getVisitedTrails } from './schema.js';
+
+    // Filter Trails
+    document.getElementById('filterTrailsForm').addEventListener('submit', async (e) => {
+      e.preventDefault();
+      const user = auth.currentUser;
+      if (!user) {
+        alert('Please sign in to filter trails.');
+        return;
+      }
+      const stars = document.getElementById('stars').value;
+      const nonVisited = document.getElementById('nonVisited').checked;
+      const filters = { stars: stars ? parseInt(stars) : null, nonVisited };
+      const filteredTrails = await getFilteredTrails(user.uid, filters);
+      displayFilteredTrails(filteredTrails);
+    });
+
+    // Display Filtered Trails
+    function displayFilteredTrails(trails) {
+      const filteredTrailsList = document.getElementById('filteredTrailsList');
+      filteredTrailsList.innerHTML = '';
+      trails.forEach((trail) => {
+        const listItem = document.createElement('li');
+        listItem.textContent = `${trail.name} - ${trail.location} (${trail.rating} stars)`;
+        filteredTrailsList.appendChild(listItem);
+      });
+    }
+  </script>
+</body>
+</html>
