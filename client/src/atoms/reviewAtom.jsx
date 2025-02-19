@@ -41,3 +41,44 @@ console.error("Error fetching review post", error);
 }
 }
 )
+
+export const updateReview = atom(
+  null,
+  async(get,set,{userId,reviewPostId,description,rating}) =>
+    try {
+        const payload = {userId,reviewPostId,description,rating}
+        const response = await axios.put(`/api/trailReviews`,payload)
+        const updatedReview = response.data
+        set
+        (
+          reviewsAtom,
+          get(reviewsAtom).map((review) => (review._id === reviewId ? updatedReview : review))
+        )
+         console.log("Updated Post from Atom:", updatedReview)
+        } catch(error)
+        {
+        console.error("Error updating post", error)
+        }
+        }
+        )
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+    
+
+
+
