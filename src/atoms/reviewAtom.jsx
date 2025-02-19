@@ -7,7 +7,7 @@ export const reviewContentAtom = atom(localStorage.getItem("reviewContent") || "
 
 // Define atom to manage reviews
 export const reviewsAtom = atom([]);
-
+// TODO: Attach user identifier to every review
 // Define atom to create a review
 export const createReviewAtom = atom(
   (get) => get(reviewsAtom),
