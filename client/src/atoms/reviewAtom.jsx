@@ -8,19 +8,36 @@ export const reviewContentAtom = atom(localStorage.getItem("reviewContent") || "
 // Define atom to manage reviews
 export const reviewsAtom = atom([]);
 
-// TODO: Attach user identifier to every review
 // Define atom to create a review
 export const createReviewAtom = atom(
   (get) => get(reviewsAtom),
-  (get, set, { trailId, description, rating }) => {
-    const currentReviews = get(reviewsAtom);
-    const trailReviews = currentReviews[trailId] || [];
-    // Define the new review structure
-    const newReview = {
-      description,
-      rating: Math.max(0, Math.min(5, rating)), // Ensure rating is between 0 and 5
-      date: new Date().toISOString() // Add a timestamp for the review
-    };
-    set(reviewsAtom, { ...currentReviews, [trailId]: [...trailReviews, newReview] });
+  async (get, set, { trailId, description, rating }) => {
+    try {
+      const response = await axios.post(`/api/trailReviews`, { trailId, description, rating });
+      const newReview = response.data;
+      const currentReviews = get(reviewsAtom);
+      const trailReviews = currentReviews[trailId] || [];
+      set(reviewsAtom, { ...currentReviews, [trailId]: [...trailReviews, newReview] });
+      console.log("Review Data from Atom:", newReview);
+    } catch (error) {
+      console.error("Error creating review", error);
+    }
   }
 );
+
+export const trailReviewByIdAtom = atom(
+(get) => get(singleReviewPostAtom),
+async(get,set,{userId,reviewId}) =>
+{
+try
+{
+const response = await.axios.post(`/api/trailReviews/${userId}/${reviewPost}`)
+const trailReviewPostData = response.data
+set(singleReviewPostAtom,trailReviewPostData)
+console.log("Review Post Data From Atom: ", trailReviewPostData)
+} catch(error)
+{
+console.error("Error fetching review post", error);
+}
+}
+)
