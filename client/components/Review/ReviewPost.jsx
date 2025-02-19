@@ -14,7 +14,7 @@ const trailNameAtom = atom(localStorage.getItem("trailName") || "");
 const ratingAtom = atom(localStorage.getItem("rating") || "");
 const reviewContentAtom = atom(localStorage.getItem("reviewContent") || "");
 
-function HomePost() {
+function ReviewPost() {
 	// Get user id and create a review atom
 	const [user, setUser] = useAtom(testAtom);
 	const [, createReview] = useAtom(createReviewAtom);
@@ -138,4 +138,4 @@ function HomePost() {
 	);
 }
 
-export default HomePost;
+export default ReviewPost;
