@@ -59,6 +59,38 @@ const Trails = () => {
         setRadius(e.target.value);
     };
 
+
+    const addFavorite = async (googlePlaceId) => {
+        try {
+            const userId = 'USER_ID'; // Replace with actual user ID
+            await axios.post('/api/favorites', { userId, googlePlaceId });
+            alert('Trail added to favorites');
+        } catch (error) {
+            console.error('Failed to add favorite trail', error);
+        }
+    };
+
+    return (
+        <div>
+            <form onSubmit={searchTrails}>
+                <input type="text" value={searchField} onChange={(e) => setSearchField(e.target.value)} placeholder="Search for trails" />
+                <input type="number" value={radius} onChange={(e) => setRadius(e.target.value)} placeholder="Radius in miles" />
+                <button type="submit">Search</button>
+            </form>
+            <ul>
+                {trails.map(trail => (
+                    <li key={trail.place_id}>
+                        {trail.name}
+                        <button onClick={() => addFavorite(trail.place_id)}>Add to Favorites</button>
+                    </li>
+                ))}
+            </ul>
+        </div>
+    );
+};
+
+
+
     return (
         <div>
             <Search 
@@ -70,6 +102,5 @@ const Trails = () => {
             />
         </div>
     );
-};
 
 export default Trails;
