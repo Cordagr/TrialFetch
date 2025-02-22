@@ -90,7 +90,6 @@ const Trails = () => {
 };
 
 
-
     return (
         <div>
             <Search 
