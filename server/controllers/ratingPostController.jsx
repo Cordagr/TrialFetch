@@ -43,7 +43,7 @@ const createRatingPost = async (req, res) => {
 // Get rating post by ID
 const getRatingPost = async (req, res) => {
     try {
-        const { ratingPostId } = req.params;
+        const { ratingPostId } = req.body;
         const ratingPosts = await RatingPostModel.findById(ratingPostId);
         res.status(200).json(ratingPosts);
     } catch (error) {

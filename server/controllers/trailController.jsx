@@ -14,7 +14,7 @@ const createTrail = async (req, res) => {
 // Get a trail by ID
 const getTrail = async (req, res) => {
     try {
-        const { trailId } = req.params;
+        const { trailId } = req.body;
         const trail = await TrailModel.findById(trailId);
         if (!trail) {
             return res.status(404).json({ message: "Trail not found" });
@@ -28,7 +28,7 @@ const getTrail = async (req, res) => {
 // Update a trail by ID
 const updateTrail = async (req, res) => {
     try {
-        const { trailId } = req.params;
+        const { trailId } = req.body;
         const updatedTrail = await TrailModel.findByIdAndUpdate(trailId, req.body, { new: true });
         if (!updatedTrail) {
             return res.status(404).json({ message: "Trail not found" });
@@ -42,7 +42,7 @@ const updateTrail = async (req, res) => {
 // Delete a trail by ID
 const deleteTrail = async (req, res) => {
     try {
-        const { trailId } = req.params;
+        const { trailId } = req.body;
         const deletedTrail = await TrailModel.findByIdAndDelete(trailId);
         if (!deletedTrail) {
             return res.status(404).json({ message: "Trail not found" });

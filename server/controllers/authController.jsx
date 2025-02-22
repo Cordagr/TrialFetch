@@ -92,9 +92,68 @@ const logoutUser = async(req,res) =>
     res.json({message: "Logout successful"})
 }
 
+
+
+const getProfile = (req, res) => {
+    //extract the token from the cookies
+    const { token } = req.cookies;
+    if (token) {
+        //verifying token using the secret key
+        jwt.verify(token, process.env.JWT_SECRET, {}, async (err, decoded) => {
+            if (err) {
+                console.error("JWT Error:", err);
+                return res.status(500).json({ error: "Token verification failed" });
+            }
+            try {
+                //fetch the user details from the database
+                const user = await UserModel.findById(decoded.id).select("name email shortdesc longdesc avatar background firstname lastname");
+                if (!user) {
+                    return res.status(404).json({ error: "User not found" });
+                }
+				//good practices
+                console.log("Fetched user data:", user);
+                res.json(user);
+            } catch (error) {
+				//good practices
+                console.error("Database Error:", error);
+                res.status(500).json({ error: "Failed to fetch user profile" });
+            }
+        });
+    } else {
+		//good practices
+        res.status(401).json({ error: "No token provided" });
+    }
+};
+
+//function to update users profile information 
+const updateUser = (req, res) => {
+	//destructure the id and newdetails from the request body
+	const {userId, newDetails} = req.body;
+
+	//userModel is used to find the user by id and update other info
+	UserModel.findByIdAndUpdate(userId, newDetails, {new: true})
+	.then(updatedUser => {
+		// If the update is successful, send a JSON response with the updated user information
+		res.json({
+		  success: true,
+		  message: "User updated successfully",
+		  user: updatedUser,
+		});
+	  })
+	  .catch(error => {
+		// If there's an error, send a 500 status code and a JSON response with the error message
+		res.status(500).json({
+		  success: false,
+		  message: "Error updating user",
+		  error: error.message,
+		});
+	  });
+};
 // Handle exports to other part of application
 module.exports = {
 	registerUser,
 	loginUser,
 	logoutUser,
+    getProfile,
+    updateUser,
 };

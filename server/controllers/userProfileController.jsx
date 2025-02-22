@@ -1,11 +1,11 @@
-const User = require("../models/User")
+const User = require("../models/user")
 //const userProfileModel = require("../models/user")
 
 const getUserProfile = async(req,res) =>
 {
 try
 {
-    const {userId} = req.params
+    const {userId} = req.body
     const userProfile = await User.findById(userId)
     if(!userProfile)
     {
@@ -22,7 +22,7 @@ const updateUserProfile = async(req,res) =>
 {
     try
     {
-        const {userId} = req.params
+        const {userId} = req.body
         const {name,location,profilePicture} = req.body
 
         const updatedProfile = await User.findByIdAndUpdate(userId,
@@ -44,7 +44,7 @@ const deleteUserProfile = async(req,res) =>
 {
     try
     {
-        const {userId} = req.params
+        const {userId} = req.body
         const deletedProfile = await User.findByIdAndDelete(userId)
         if(!deletedProfile)
         {
