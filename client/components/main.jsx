@@ -13,9 +13,10 @@ import { Provider } from "jotai";
 import { useAtom } from "jotai"; 
 
 
-// Connecting front end to backend server
-axios.defaults.baseURL = "https://trail-fetch-backend.vercel.app";
+// Connecting front end to backend serveraxios.defaults.baseURL = "https://trail-fetch-backend.vercel.app";
+
 axios.defaults.withCredentials = true;
+axios.defaults.baseURL = "https://trial-fetch-backend.vercel.app";
 
 ReactDOM.createRoot(document.getElementById("root")).render(
 		<React.StrictMode>
