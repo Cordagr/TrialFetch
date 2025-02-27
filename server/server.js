@@ -14,7 +14,7 @@ const trailRoutes = require("./routes/trailRoutes");
 // Middleware
 app.use(
   cors({
-    origin: "https://trail-fetch.vercel.app",
+    origin: "https://trail-fetch-cordagr-cordagrs-projects.vercel.app/",
     methods: ["POST", "GET", "PUT", "DELETE"],
     credentials: true,
   })
