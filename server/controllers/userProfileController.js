@@ -1,5 +1,4 @@
 const User = require("../models/user")
-//const userProfileModel = require("../models/user")
 
 const getUserProfile = async(req,res) =>
 {
@@ -11,7 +10,7 @@ try
     {
         return res.status(404).json({message:"User profile not found"})
     }
-    res.status(200).json(User)
+    res.status(200).json(userProfile)
 }   catch(error)
 {
     res.status(500).json({error:error.message})
@@ -57,7 +56,6 @@ const deleteUserProfile = async(req,res) =>
     }
 }
 
-// Favorite Trail Function // 
 const addFavoriteTrail = async(req,res) =>
 {
 try 
@@ -90,18 +88,18 @@ const {userId, googlePlaceId} = req.body
 const user = await User.findById(userId)
 if(!user)
 {
-    return res.stus(404).json({message:"User not found"})
+    return res.status(404).json({message:"User not found"})
 }
-user.favoriteTrails = user.favoritTrails.filter(id => id !== googlePlaceId)
+user.favoriteTrails = user.favoriteTrails.filter(id => id !== googlePlaceId)
 await user.save()
+res.status(200).json({message:"Trail removed from favorites", favoriteTrails:user.favoriteTrails})
 } 
 catch(error)
 {
-return res.status(500).json({erorr:"Failed to remove from favorite trails"})
+return res.status(500).json({error:"Failed to remove from favorite trails"})
 }
 }
 
-// Get tuple of favorited trails // 
 const getFavoriteTrails = async(req,res) =>
 {
     try
@@ -119,7 +117,7 @@ const getFavoriteTrails = async(req,res) =>
     {
     res.status(500).json({error:"Failed to fetch favorite trails"})
     }
-    }
+}
 
 
 const  createUserProfile = async(req,res) =>
@@ -128,7 +126,7 @@ const  createUserProfile = async(req,res) =>
     {
         const {name,location,profilePicture} = req.body
 
-        const newProfile = new userProfileModel({
+        const newProfile = new User({
             name,
             location,
             profilePicture
@@ -149,4 +147,7 @@ module.exports =
     updateUserProfile,
     deleteUserProfile,
     createUserProfile,
+    addFavoriteTrail,
+    removeFavoriteTrail,
+    getFavoriteTrails
 }

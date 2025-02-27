@@ -1,40 +1,36 @@
 import React from 'react';
-import PropTypes from 'prop-types';
 
-// Search component
-// This displays the search bar on the top of the page
-// and handles submitting the form with user input
-// to the searchTrails function.
 const Search = ({ searchTrails, handleSearch, searchField, handleRadius, radius }) => {
     return (
-        <div className="search-area">
+        <div className="search-container">
             <form onSubmit={searchTrails}>
-                <img src='/icons/search-line.svg' alt='search icon' className='search-icon'/>
-                <input 
-                    onChange={handleSearch} 
-                    type="text"
-                    value={searchField}
-                    placeholder="Search for trails..."
-                />
-                <input 
-                    onChange={handleRadius} 
-                    type="number"
-                    value={radius}
-                    placeholder="Radius in miles"
-                />
-                {/* <button type="submit">Search</button> */}
+                <div className="form-group">
+                    <label htmlFor="location">Location</label>
+                    <input 
+                        type="text" 
+                        id="location"
+                        value={searchField} 
+                        onChange={handleSearch} 
+                        placeholder="Enter location (e.g., city, zip code)" 
+                        required
+                    />
+                </div>
+                <div className="form-group">
+                    <label htmlFor="radius">Radius (miles)</label>
+                    <input 
+                        type="number" 
+                        id="radius"
+                        value={radius} 
+                        onChange={handleRadius} 
+                        min="1" 
+                        max="50" 
+                        required
+                    />
+                </div>
+                <button type="submit" className="search-btn">Search Trails</button>
             </form>
         </div>
     );
-};
-
-// Define prop types for the Search component
-Search.propTypes = {
-    searchField: PropTypes.string.isRequired,
-    handleSearch: PropTypes.func.isRequired,
-    searchTrails: PropTypes.func.isRequired,
-    handleRadius: PropTypes.func.isRequired,
-    radius: PropTypes.number.isRequired,
 };
 
 export default Search;

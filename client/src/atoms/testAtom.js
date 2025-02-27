@@ -1,5 +1,5 @@
 import { atom } from "jotai";
-import axios from "axios";
+import axios from "../../api";
 
 // Atom to store user data in an object
 export const testAtom = atom(null);
@@ -10,7 +10,7 @@ export const fetchTestAtom = atom(
   async (get, set) => {
     console.log("fetchTestAtom called");
     try {
-      const response = await axios.get("/profile");
+      const response = await axios.get("/api/auth/profile");
       const userData = response.data;
       set(testAtom, userData);
       console.log("User Data from Atom:", userData);
@@ -29,7 +29,7 @@ export const updateUserAtom = atom(
       const payload = { userId, newDetails };
       console.log("Payload being sent to server:", payload);
 
-      const response = await axios.put("/updateUser", payload);
+      const response = await axios.put("/api/auth/update", payload);
       console.log("Server response:", response);
 
       if (response.data.success) {
@@ -48,7 +48,7 @@ export const updateUserAtom = atom(
 export const logoutUserAtom = atom(null, async (get, set) => {
   try {
     console.log("Logging out...");
-    await axios.post("/logout");
+    await axios.post("/api/auth/logout");
     set(testAtom, null);
     localStorage.removeItem("user");
     console.log("User logged out successfully");
@@ -56,4 +56,3 @@ export const logoutUserAtom = atom(null, async (get, set) => {
     console.error("Error logging out:", error);
   }
 });
-``` ▋

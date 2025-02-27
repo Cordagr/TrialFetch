@@ -1,37 +1,35 @@
-import { Link } from "react-router-dom";
-import Trails from "../Trail/Trail";
+import React, { useContext } from 'react';
+import { Link } from 'react-router-dom';
+import { UserContext } from '../../context/userContext';
 
-function Header() {
+const Header = () => {
+  const { user, logout } = useContext(UserContext);
 
-	return (
-		<>
-		{/* Import fas fa-trail icon */}
-		<link
-  			href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css"
-  			rel="stylesheet"/>
-
-			<div className="header">
-				<div className="logo">
-					<Link to="/">
-						<img src="/icons/Trail Realm Logo Copy.png" alt="logo" />
-					</Link>
-				</div>
-				<div className="small-logo">
-					<Link to="/">
-						<img src="/icons/TR_Logo_Small.png" alt="logo" />
-					</Link>
-				</div>
-				<Trails />
-				<div className="user-section">
-				<Link to="/dashboard">
-					<button>
-						<img src="/icons/user-line.svg" alt="user icon" />
-					</button>
-				</Link>
-			</div>
-			</div>
-		</>
-	);
-}
+  return (
+    <header className="header">
+      <div className="container">
+        <div className="header-content">
+          <div className="logo">
+            <Link to="/">Trail Fetch</Link>
+          </div>
+          <nav className="nav">
+            <ul>
+              <li><Link to="/">Home</Link></li>
+              <li><Link to="/search">Search Trails</Link></li>
+              {user ? (
+                <>
+                  <li><span>Welcome, {user.name}</span></li>
+                  <li><button onClick={logout}>Logout</button></li>
+                </>
+              ) : (
+                <li><Link to="/login">Login</Link></li>
+              )}
+            </ul>
+          </nav>
+        </div>
+      </div>
+    </header>
+  );
+};
 
 export default Header;

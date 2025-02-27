@@ -16,13 +16,13 @@ const {
 
 router.use(cors({
     credentials: true,
-    origin: "https://trial-fetch.vercel.app",
+    origin: ["http://localhost:3000", "https://trail-fetch.vercel.app"],
 }))
 
 //router.get("/", test)
 router.post("/register", registerUser)
 router.post("/login", loginUser)
-router.post("logout",logoutUser)
+router.post("/logout",logoutUser)
 router.get("/profile", getProfile)
 router.put("/update", updateUser)
 

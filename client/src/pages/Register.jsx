@@ -1,84 +1,75 @@
-import { useState } from "react";
-import Header from "../components/Header/Header";
-import axios from "axios";
-import { toast } from "react-hot-toast";
-import { useNavigate } from "react-router-dom";
+import React, { useState } from 'react';
+import { useNavigate } from 'react-router-dom';
+import { toast } from 'react-hot-toast';
+import axios from '../../api';
 
-//register page
-export default function Register() {
-	//navigate
-	const navigate = useNavigate();
+const Register = () => {
+    const navigate = useNavigate();
+    const [data, setData] = useState({
+        name: '',
+        email: '',
+        password: '',
+    });
 
-	//default data
-	const [data, setData] = useState({
-		name: "",
-		email: "",
-		password: "",
-	});
+    const registerUser = async (e) => {
+        e.preventDefault();
+        const { name, email, password } = data;
+        try {
+            const response = await axios.post('/api/auth/register', { name, email, password });
+            if (response.data.error) {
+                toast.error(response.data.error);
+            } else {
+                setData({});
+                toast.success('Registration successful. Please login.');
+                navigate('/login');
+            }
+        } catch (error) {
+            console.log(error);
+            toast.error('Registration failed');
+        }
+    };
 
-	//function that registers the user to the db
-	const registerUser = async (e) => {
-		//prevents default form submit
-		e.preventDefault();
-		//destruct's the name email and password
-		const { name, email, password } = data;
-		try {
-			//sends a POST request to the /register endpoint
-			const response = await axios.post("/register", {
-				name,
-				email,
-				password,
-			});
-			//check if response contains an error
-			if (response.data.error) {
-				//display toast error
-				toast.error(response.data.error);
-			} else {
-				//clear the form data
-				setData({ name: "", email: "", password: ""});
-				toast.success("Registration Success!");
-				//nav to login page
-				navigate("/login");
-			}
-		} catch (error) {
-			//display toast error
-			toast.error("An error occurred during registration.");
-			console.error(error);
-		}
-	};
-
-	return (
-		<>
-			<Header />
-			<form className="register-form" onSubmit={registerUser}>
-				<label className="register-label">Name</label>
-				<input
-					className="register-input-name"
-					type="text"
-					placeholder="enter name..."
-					value={data.name}
-					onChange={(e) => setData({ ...data, name: e.target.value })}
-				/>
-				<label className="register-label">Email</label>
-				<input
-					className="register-input-email"
-					type="email"
-					placeholder="enter email..."
-					value={data.email}
-					onChange={(e) => setData({ ...data, email: e.target.value })}
-				/>
-				<label className="register-label">Password</label>
-				<input
-					className="register-input-password"
-					type="password"
-					placeholder="enter password..."
-					value={data.password}
-					onChange={(e) => setData({ ...data, password: e.target.value })}
-				/>
-				<button className="register-button" type="submit">
-					Submit
-				</button>
-			</form>
-		</>
-	);
+    return (
+        <div className="register-container">
+            <h2>Register</h2>
+            <form onSubmit={registerUser}>
+                <div className="form-group">
+                    <label>Name</label>
+                    <input
+                        type="text"
+                        placeholder="Enter your name"
+                        value={data.name}
+                        onChange={(e) => setData({ ...data, name: e.target.value })}
+                        required
+                    />
+                </div>
+                <div className="form-group">
+                    <label>Email</label>
+                    <input
+                        type="email"
+                        placeholder="Enter your email"
+                        value={data.email}
+                        onChange={(e) => setData({ ...data, email: e.target.value })}
+                        required
+                    />
+                </div>
+                <div className="form-group">
+                    <label>Password</label>
+                    <input
+                        type="password"
+                        placeholder="Enter your password"
+                        value={data.password}
+                        onChange={(e) => setData({ ...data, password: e.target.value })}
+                        required
+                    />
+                </div>
+                <button type="submit" className="register-btn">Register</button>
+            </form>
+            <p>
+                Already have an account? <a href="/login">Login</a>
+            </p>
+        </div>
+    );
 };
+
+export default Register;

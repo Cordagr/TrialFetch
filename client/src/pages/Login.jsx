@@ -1,77 +1,68 @@
-import { useAtom } from "jotai";
-import { useState } from "react";
-import { Link, useNavigate } from "react-router-dom";
-import axios from "axios";
-import { toast } from "react-hot-toast";
-import Header from "../components/Header/Header";
-import { testAtom } from "../atoms/testAtom";
+import React, { useState } from 'react';
+import { useNavigate } from 'react-router-dom';
+import { toast } from 'react-hot-toast';
+import axios from '../../api';
+import { useContext } from 'react';
+import { UserContext } from '../context/userContext';
 
-export default function Login() {
-	//access the userAtom to set user state upon successful login
-	const [, setUser] = useAtom(testAtom);
-	
-	//navigation
-	const navigate = useNavigate();
+const Login = () => {
+    const navigate = useNavigate();
+    const { setUser } = useContext(UserContext);
+    const [data, setData] = useState({
+        email: '',
+        password: '',
+    });
 
-	//local state to handle form inputs
-	const [data, setData] = useState({
-		email: "",
-		password: "",
-	});
+    const loginUser = async (e) => {
+        e.preventDefault();
+        const { email, password } = data;
+        try {
+            const response = await axios.post('/api/auth/login', { email, password });
+            if (response.data.error) {
+                toast.error(response.data.error);
+            } else {
+                setData({});
+                setUser(response.data.user);
+                toast.success('Login successful');
+                navigate('/');
+            }
+        } catch (error) {
+            console.log(error);
+            toast.error('Login failed');
+        }
+    };
 
-	//handle login form submission
-	const loginUser = async (e) => {
-		e.preventDefault();
-		const { email, password } = data;
+    return (
+        <div className="login-container">
+            <h2>Login</h2>
+            <form onSubmit={loginUser}>
+                <div className="form-group">
+                    <label>Email</label>
+                    <input
+                        type="email"
+                        placeholder="Enter your email"
+                        value={data.email}
+                        onChange={(e) => setData({ ...data, email: e.target.value })}
+                        required
+                    />
+                </div>
+                <div className="form-group">
+                    <label>Password</label>
+                    <input
+                        type="password"
+                        placeholder="Enter your password"
+                        value={data.password}
+                        onChange={(e) => setData({ ...data, password: e.target.value })}
+                        required
+                    />
+                </div>
+                <button type="submit" className="login-btn">Login</button>
+            </form>
+            <p>
+                Don't have an account? <a href="/register">Register</a>
+            </p>
+        </div>
+    );
+};
 
-		try {
-			//sends POST request to /login endpoint
-			const res = await axios.post("/login", { email, password });
-
-			if (res.data.error) {
-				toast.error(res.data.error);
-			} else {
-				console.log("Login response", res.data);
-				setData({ email: "", password: "" });
-
-				//update the userAtom with the logged-in user data
-				setUser(res.data.user);
-
-				navigate("/dashboard");
-			}
-		} catch (error) {
-			toast.error("An error occurred during login.");
-			console.log(error);
-		}
-	};
-
-	return (
-		<>
-			<Header />
-			<form className="login-form" onSubmit={loginUser}>
-				<label className="login-label">Email</label>
-				<input
-					className="login-input-email"
-					type="email"
-					placeholder="enter email..."
-					value={data.email}
-					onChange={(e) => setData({ ...data, email: e.target.value })}
-				/>
-				<label className="login-label">Password</label>
-				<input
-					className="login-input-password"
-					type="password"
-					placeholder="enter password..."
-					value={data.password}
-					onChange={(e) => setData({ ...data, password: e.target.value })}
-				/>
-				<button className="login-button" type="submit">
-					Login
-				</button>
-				<Link to="/register" className="signup-link">
-					Sign up
-				</Link>
-			</form>
-		</>
-	);
-}
+export default Login;

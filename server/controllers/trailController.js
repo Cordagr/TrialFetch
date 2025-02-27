@@ -1,4 +1,5 @@
 const TrailModel = require("../models/trail");
+const axios = require("axios");
 
 // Create a new trail
 const createTrail = async (req, res) => {
@@ -53,29 +54,40 @@ const deleteTrail = async (req, res) => {
     }
 };
 
-// Search for trails
-const searchTrails = async (req, res) => {
+// Proxy for Google Places API to avoid CORS issues
+const searchPlacesProxy = async (req, res) => {
     try {
-        const { searchField, radius } = req.query;
+        console.log("Places proxy request received:", req.query);
+        const { query, location, radius, type } = req.query;
         const API_KEY = process.env.GOOGLE_PLACES_API_KEY;
 
-        const response = await axios.get(`https://maps.googleapis.com/maps/api/place/nearbysearch/json`, {
-            params: {
-                location: searchField,
-                radius: radius * 1609.34, // Convert miles to meters
-                type: 'park',
-                key: API_KEY
-            }
-        });
-
-        if (response.data.status !== 'OK') {
-            return res.status(500).json({ error: 'Failed to fetch trails' });
+        if (!API_KEY) {
+            return res.status(500).json({ error: 'Google Places API key is missing' });
         }
 
-        res.json(response.data.results);
+        let url;
+        let params = { key: API_KEY };
+
+        if (query) {
+            // Text search
+            url = 'https://maps.googleapis.com/maps/api/place/textsearch/json';
+            params.query = query;
+        } else {
+            // Nearby search
+            url = 'https://maps.googleapis.com/maps/api/place/nearbysearch/json';
+            params.location = location || '37.7749,-122.4194'; // Default to San Francisco
+            params.radius = radius ? radius * 1609.34 : 5000; // Convert miles to meters or default to 5km
+            params.type = type || 'park';
+        }
+
+        console.log("Making request to Google Places API:", url, params);
+        const response = await axios.get(url, { params });
+        
+        console.log("Google Places API response status:", response.data.status);
+        res.json(response.data);
     } catch (error) {
-        console.error('Error fetching trails:', error);
-        res.status(500).json({ error: 'An error occurred while fetching trails' });
+        console.error('Error in places proxy:', error);
+        res.status(500).json({ error: 'An error occurred while fetching places' });
     }
 };
 
@@ -84,5 +96,5 @@ module.exports = {
     getTrail,
     updateTrail,
     deleteTrail,
-    searchTrails,
+    searchPlacesProxy
 };

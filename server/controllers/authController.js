@@ -30,7 +30,7 @@ const registerUser = async(req,res) =>
         }
         const hashedPassord = await hashPassword(password)
         
-        const user = new User({name,email,password:hashedPassword})
+        const user = new User({name,email,password:hashedPassord})
 
         await user.save()
 
@@ -110,50 +110,50 @@ const getProfile = (req, res) => {
                 if (!user) {
                     return res.status(404).json({ error: "User not found" });
                 }
-				//good practices
+                //good practices
                 console.log("Fetched user data:", user);
                 res.json(user);
             } catch (error) {
-				//good practices
+                //good practices
                 console.error("Database Error:", error);
                 res.status(500).json({ error: "Failed to fetch user profile" });
             }
         });
     } else {
-		//good practices
+        //good practices
         res.status(401).json({ error: "No token provided" });
     }
 };
 
 //function to update users profile information 
 const updateUser = (req, res) => {
-	//destructure the id and newdetails from the request body
-	const {userId, newDetails} = req.body;
+    //destructure the id and newdetails from the request body
+    const {userId, newDetails} = req.body;
 
-	//userModel is used to find the user by id and update other info
-	UserModel.findByIdAndUpdate(userId, newDetails, {new: true})
-	.then(updatedUser => {
-		// If the update is successful, send a JSON response with the updated user information
-		res.json({
-		  success: true,
-		  message: "User updated successfully",
-		  user: updatedUser,
-		});
-	  })
-	  .catch(error => {
-		// If there's an error, send a 500 status code and a JSON response with the error message
-		res.status(500).json({
-		  success: false,
-		  message: "Error updating user",
-		  error: error.message,
-		});
-	  });
+    //userModel is used to find the user by id and update other info
+    UserModel.findByIdAndUpdate(userId, newDetails, {new: true})
+    .then(updatedUser => {
+        // If the update is successful, send a JSON response with the updated user information
+        res.json({
+          success: true,
+          message: "User updated successfully",
+          user: updatedUser,
+        });
+      })
+      .catch(error => {
+        // If there's an error, send a 500 status code and a JSON response with the error message
+        res.status(500).json({
+          success: false,
+          message: "Error updating user",
+          error: error.message,
+        });
+      });
 };
 // Handle exports to other part of application
 module.exports = {
-	registerUser,
-	loginUser,
-	logoutUser,
+    registerUser,
+    loginUser,
+    logoutUser,
     getProfile,
     updateUser,
 };
