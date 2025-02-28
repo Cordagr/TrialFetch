@@ -1,50 +1,52 @@
-const User = require("../models/user")
+const UserModel = require("../models/user")
 
-const getUserProfile = async(req,res) =>
+const getUserProfile = async (req, res) =>
 {
 try
 {
     const {userId} = req.body
-    const userProfile = await User.findById(userId)
+    const userProfile = await UserModel.findById(userId)
     if(!userProfile)
     {
-        return res.status(404).json({message:"User profile not found"})
+        return res.status(404).json({ message: "User profile not found" })
     }
     res.status(200).json(userProfile)
 }   catch(error)
 {
     res.status(500).json({error:error.message})
+    console.error('Error fetching user profile:', error);
 }
 }
 
-const updateUserProfile = async(req,res) =>
+const updateUserProfile = async (req, res) =>
 {
     try
     {
-        const {userId} = req.body
+        const { userId } = req.body
         const {name,location,profilePicture} = req.body
 
-        const updatedProfile = await User.findByIdAndUpdate(userId,
+        const updatedProfile = await UserModel.findByIdAndUpdate(userId,
             {name,location,profilePicture},
             {new:true}
         )
         if(!updatedProfile)
         {
-            return res.status(404).json({message:"User profile not found"})
+            return res.status(404).json({ message: "User profile not found" })
         }
         res.status(200).json(updatedProfile)
     }   catch(error)
     {
         res.status(500).json({error:error.message})
+        console.error('Error updating user profile:', error);
     }
 }
 
-const deleteUserProfile = async(req,res) =>
+const deleteUserProfile = async (req, res) =>
 {
     try
     {
-        const {userId} = req.body
-        const deletedProfile = await User.findByIdAndDelete(userId)
+        const { userId } = req.body
+        const deletedProfile = await UserModel.findByIdAndDelete(userId)
         if(!deletedProfile)
         {
             return res.status(404).json({message:"User profile not found"})
@@ -53,15 +55,16 @@ const deleteUserProfile = async(req,res) =>
     }   catch(error)
     {
         res.status(500).json({error:error.message})
+        console.error('Error deleting user profile:', error);
     }
 }
 
-const addFavoriteTrail = async(req,res) =>
+const addFavoriteTrail = async (req, res) =>
 {
 try 
 {
-    const {userId, googlePlaceId} = req.body
-    const user = await User.findById(userId)
+    const { userId, googlePlaceId } = req.body
+    const user = await UserModel.findById(userId)
     if(!user)
     {
         return res.status(404).json({message:"User not found"})
@@ -76,16 +79,17 @@ try
     }catch(error)
     {
     res.status(500).json({error: "Failed to add to favorite trails"})
+    console.error('Error adding favorite trail:', error);
     }
 }
 
 
-const removeFavoriteTrail = async(req,res) =>
+const removeFavoriteTrail = async (req, res) =>
 {
 try
 {
-const {userId, googlePlaceId} = req.body
-const user = await User.findById(userId)
+const { userId, googlePlaceId } = req.body
+const user = await UserModel.findById(userId)
 if(!user)
 {
     return res.status(404).json({message:"User not found"})
@@ -94,18 +98,19 @@ user.favoriteTrails = user.favoriteTrails.filter(id => id !== googlePlaceId)
 await user.save()
 res.status(200).json({message:"Trail removed from favorites", favoriteTrails:user.favoriteTrails})
 } 
-catch(error)
+catch (error)
 {
 return res.status(500).json({error:"Failed to remove from favorite trails"})
+console.error('Error removing favorite trail:', error);
 }
 }
 
-const getFavoriteTrails = async(req,res) =>
+const getFavoriteTrails = async (req, res) =>
 {
     try
     {
         const{userId} = req.params
-        const user = await User.findById(userId)
+        const user = await UserModel.findById(userId)
         if(!user)
         {
             return res.status(404).json({message:"User not found"})
@@ -116,6 +121,7 @@ const getFavoriteTrails = async(req,res) =>
     catch(error)
     {
     res.status(500).json({error:"Failed to fetch favorite trails"})
+    console.error('Error fetching favorite trails:', error);
     }
 }
 
@@ -126,7 +132,7 @@ const  createUserProfile = async(req,res) =>
     {
         const {name,location,profilePicture} = req.body
 
-        const newProfile = new User({
+        const newProfile = new UserModel({
             name,
             location,
             profilePicture
@@ -137,6 +143,7 @@ const  createUserProfile = async(req,res) =>
     }   catch(error)
     {
         res.status(500).json({error:error.message})
+        console.error('Error creating user profile:', error);
     }
 }
 

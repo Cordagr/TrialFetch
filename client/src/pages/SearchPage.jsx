@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { useLocation } from 'react-router-dom';
 import Search from '../components/Trail/Search';
 import TrailList from '../components/Trail/TrailList';
-import axios from '../../api';
+import axios from '../../../api/api';
 
 const SearchPage = () => {
     const location = useLocation();

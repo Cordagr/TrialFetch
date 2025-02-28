@@ -1,5 +1,6 @@
 const TrailModel = require("../models/trail");
 const axios = require("axios");
+const { google } = require('googleapis');
 
 // Create a new trail
 const createTrail = async (req, res) => {
@@ -9,6 +10,7 @@ const createTrail = async (req, res) => {
         res.status(201).json(newTrail);
     } catch (error) {
         res.status(500).json({ error: "Failed to create trail" });
+        console.error('Error creating trail:', error);
     }
 };
 
@@ -22,6 +24,7 @@ const getTrail = async (req, res) => {
         }
         res.status(200).json(trail);
     } catch (error) {
+        console.error('Error fetching trail:', error);
         res.status(500).json({ error: "Failed to fetch trail" });
     }
 };
@@ -36,6 +39,7 @@ const updateTrail = async (req, res) => {
         }
         res.status(200).json(updatedTrail);
     } catch (error) {
+        console.error('Error updating trail:', error);
         res.status(500).json({ error: "Failed to update trail" });
     }
 };
@@ -50,6 +54,7 @@ const deleteTrail = async (req, res) => {
         }
         res.status(200).json({ message: "Trail deleted successfully" });
     } catch (error) {
+        console.error('Error deleting trail:', error);
         res.status(500).json({ error: "Failed to delete trail" });
     }
 };
@@ -59,6 +64,7 @@ const searchPlacesProxy = async (req, res) => {
     try {
         console.log("Places proxy request received:", req.query);
         const { query, location, radius, type } = req.query;
+        const { google_places_api_key } = process.env;
         const API_KEY = process.env.GOOGLE_PLACES_API_KEY;
 
         if (!API_KEY) {
@@ -67,7 +73,7 @@ const searchPlacesProxy = async (req, res) => {
 
         let url;
         let params = { key: API_KEY };
-
+        
         if (query) {
             // Text search
             url = 'https://maps.googleapis.com/maps/api/place/textsearch/json';
@@ -76,7 +82,7 @@ const searchPlacesProxy = async (req, res) => {
             // Nearby search
             url = 'https://maps.googleapis.com/maps/api/place/nearbysearch/json';
             params.location = location || '37.7749,-122.4194'; // Default to San Francisco
-            params.radius = radius ? radius * 1609.34 : 5000; // Convert miles to meters or default to 5km
+            params.radius = radius ? radius * 1609.34 : 5000; // Convert miles to meters or use default 5km
             params.type = type || 'park';
         }
 
@@ -87,6 +93,7 @@ const searchPlacesProxy = async (req, res) => {
         res.json(response.data);
     } catch (error) {
         console.error('Error in places proxy:', error);
+        console.error(error.stack);
         res.status(500).json({ error: 'An error occurred while fetching places' });
     }
 };

@@ -1,5 +1,5 @@
 import { atom } from "jotai";
-import axios from "../../api";
+import axios from "../../../api/api";
 
 // Atom to store user data in an object
 export const testAtom = atom(null);
@@ -10,7 +10,7 @@ export const fetchTestAtom = atom(
   async (get, set) => {
     console.log("fetchTestAtom called");
     try {
-      const response = await axios.get("/api/auth/profile");
+      const response = await axios.get("/api/users/profile");
       const userData = response.data;
       set(testAtom, userData);
       console.log("User Data from Atom:", userData);
@@ -29,7 +29,7 @@ export const updateUserAtom = atom(
       const payload = { userId, newDetails };
       console.log("Payload being sent to server:", payload);
 
-      const response = await axios.put("/api/auth/update", payload);
+      const response = await axios.put("/api/users/profile", payload);
       console.log("Server response:", response);
 
       if (response.data.success) {

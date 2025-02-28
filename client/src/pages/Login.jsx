@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { toast } from 'react-hot-toast';
-import axios from '../../api';
+import axios from '../../../api/api';
 import { useContext } from 'react';
 import { UserContext } from '../context/userContext';
 

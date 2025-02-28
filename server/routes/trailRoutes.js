@@ -22,7 +22,7 @@ router.use(cors({
 router.post("/createTrail", createTrail)
 router.post("/deleteTrail", deleteTrail)
 router.get("/getTrail", getTrail)
-router.get("/searchTrails", searchTrails)
+//// router.get("/searchTrails", searchTrails)
 router.get("/searchPlaces", searchPlacesProxy)
 router.put("/updateTrail", updateTrail)
 

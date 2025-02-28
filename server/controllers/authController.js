@@ -1,7 +1,7 @@
 const User = require("../models/user")
 const {hashPassword,comparePassword} = require("../helpers/auth")
 const jwt = require("jsonwebtoken")
-const UserModel = require("../models/user")
+const UserModel = User
 
 const registerUser = async(req,res) =>
 {
@@ -28,9 +28,9 @@ const registerUser = async(req,res) =>
                 error: "email already exists",
             })
         }
-        const hashedPassord = await hashPassword(password)
+        const hashedPassword = await hashPassword(password)
         
-        const user = new User({name,email,password:hashedPassord})
+        const user = new User({name,email,password:hashedPassword})
 
         await user.save()
 
@@ -65,7 +65,7 @@ try
     {
         if(err)
         {
-            console.error("JWT Error:",err)
+            console.error("Error generating JWT token:", err)
             return res.status(500).json({error: "Token generation failed"})
         }
         res.cookie("token",token,{
@@ -96,17 +96,17 @@ const logoutUser = async(req,res) =>
 
 const getProfile = (req, res) => {
     //extract the token from the cookies
-    const { token } = req.cookies;
+    const token = req.cookies.token;
     if (token) {
         //verifying token using the secret key
         jwt.verify(token, process.env.JWT_SECRET, {}, async (err, decoded) => {
             if (err) {
-                console.error("JWT Error:", err);
+                console.error("Error verifying JWT token:", err);
                 return res.status(500).json({ error: "Token verification failed" });
             }
             try {
                 //fetch the user details from the database
-                const user = await UserModel.findById(decoded.id).select("name email shortdesc longdesc avatar background firstname lastname");
+                const user = await UserModel.findById(decoded.id).select("name email");
                 if (!user) {
                     return res.status(404).json({ error: "User not found" });
                 }
@@ -126,28 +126,29 @@ const getProfile = (req, res) => {
 };
 
 //function to update users profile information 
-const updateUser = (req, res) => {
+const updateUser = async (req, res) => {
     //destructure the id and newdetails from the request body
-    const {userId, newDetails} = req.body;
+    const { userId, newDetails } = req.body;
 
     //userModel is used to find the user by id and update other info
-    UserModel.findByIdAndUpdate(userId, newDetails, {new: true})
-    .then(updatedUser => {
-        // If the update is successful, send a JSON response with the updated user information
+    try {
+        const updatedUser = await UserModel.findByIdAndUpdate(userId, newDetails, { new: true });
+        if (!updatedUser) {
+            return res.status(404).json({ error: "User not found" });
+        }
         res.json({
-          success: true,
-          message: "User updated successfully",
-          user: updatedUser,
+            success: true,
+            message: "User updated successfully",
+            user: updatedUser
         });
-      })
-      .catch(error => {
+    } catch (error) {
         // If there's an error, send a 500 status code and a JSON response with the error message
         res.status(500).json({
-          success: false,
-          message: "Error updating user",
-          error: error.message,
+            success: false,
+            message: "Error updating user",
+            error: error.message,
         });
-      });
+    }
 };
 // Handle exports to other part of application
 module.exports = {
